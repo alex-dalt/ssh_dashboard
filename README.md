@@ -22,7 +22,7 @@ SSH: Информация о системе
 if [ -f /path/to/your/script.sh ]; then
     /path/to/your/script.sh
 fi
-
+```
 
 SSH System Dashboard
 These scripts are designed to display useful system information upon SSH login. They provide details about the system, such as hostname, operating system, kernel version, IP addresses, current user, as well as system status: uptime, CPU load, memory and disk usage, and the status of important services.
@@ -47,7 +47,7 @@ Example of adding to ~/.bashrc:
 if [ -f /path/to/your/script.sh ]; then
     /path/to/your/script.sh
 fi
-
+```
 Дополнительные советы
 
 Для /etc/update-motd.d/:
@@ -55,6 +55,6 @@ fi
 
 ```bash
 chmod +x /etc/update-motd.d/your_script.sh
-
+```
 Кастомизация:
 Вы можете легко изменить цвета, формат вывода или добавить новые данные, отредактировав скрипты под свои нужды.
