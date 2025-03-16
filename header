@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Displays system header information: hostname, OS, kernel, IP, user
+# Отображает заголовочную информацию системы: имя хоста, ОС, ядро, IP, пользователь
+
+# Load distribution information
+# Загрузка информации о дистрибутиве
+if [ -r /etc/lsb-release ]; then
+    . /etc/lsb-release
+elif [ -r /etc/os-release ]; then
+    . /etc/os-release
+    DISTRIB_DESCRIPTION="$PRETTY_NAME"
+fi
+
+if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
+    DISTRIB_DESCRIPTION=$(lsb_release -s -d 2>/dev/null)
+fi
+
+# Colors
+# Цвета
+W="\e[0;39m"
+G="\e[1;32m"
+B="\e[1;34m"
+R="\e[1;31m"
+Y="\e[1;33m"
+
+# System information
+# Информация о системе
+HOSTNAME=$(hostname)
+HOSTNAME_UPPER=$(echo "$HOSTNAME" | tr '[:lower:]' '[:upper:]')
+IP_ADDRESSES=$(hostname -I 2>/dev/null | awk '{OFS=", "; $1=$1; print}')
+OS_INFO="${DISTRIB_DESCRIPTION:-Unknown OS}"
+KERNEL_INFO="$(uname -o 2>/dev/null || uname -s) $(uname -r) $(uname -m)"
+USER_INFO=$(whoami)
+
+# Output
+# Вывод
+echo -e "${G}Welcome to ${B}$HOSTNAME_UPPER${W}"
+echo -e "${G}OS........: ${W}$OS_INFO"
+echo -e "${G}Kernel....: ${W}$KERNEL_INFO"
+echo -e "${G}IP(s).....: ${W}${IP_ADDRESSES:-N/A}"
+echo -e "${G}User......: ${W}$USER_INFO"
+echo -e "${W}----------------------------------------"

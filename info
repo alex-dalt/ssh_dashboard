@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Displays system status: uptime, load, memory, disk, CPU
+# Отображает состояние системы: время работы, нагрузка, память, диск, процессор
+
+# Colors
+# Цвета
+W="\e[0;39m"
+G="\e[1;32m"
+
+# Get system data with fallbacks
+# Получение системных данных с резервными вариантами
+LOAD=($(cat /proc/loadavg))
+LOAD1=${LOAD[0]}
+LOAD5=${LOAD[1]}
+LOAD15=${LOAD[2]}
+
+MEMORY=$(LANG=C free -h | awk '/Mem:/ {print $3 "/" $2}' || echo "N/A")
+
+if uptime -p &>/dev/null; then
+    UPTIME=$(uptime -p)
+else
+    UPTIME=$(uptime | cut -d ',' -f 1)
+fi
+
+DISK_USAGE=$(df -h / | awk 'NR==2 {print $3 "/" $2 " (" $5 ")"}' 2>/dev/null || echo "N/A")
+CPU_INFO=$(LANG=C lscpu 2>/dev/null | awk -F: '/Model name/ {print $2}' | xargs || echo "Unknown CPU")
+CPU_CORES=$(nproc 2>/dev/null || echo "N/A")
+
+# Output
+# Вывод
+echo -e "
+${W}system info:
+$W  Uptime......: ${G}${UPTIME#up }${W}
+$W  Load........: ${G}$LOAD1${W} (1m), ${G}$LOAD5${W} (5m), ${G}$LOAD15${W} (15m)
+$W  Memory......: ${G}$MEMORY
+$W  Disk........: ${G}$DISK_USAGE
+$W  CPU.........: ${G}$CPU_INFO${W} (${G}$CPU_CORES${W} cores)"

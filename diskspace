@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Displays disk usage with colored progress bars
+# Отображает использование диска с цветными индикаторами
+
+# Colors
+# Цвета
+clear="\e[0m"
+dim="\e[2m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+RED="\e[31m"
+
+# Parameters
+# Параметры
+maxDiskUsage=80
+barWidth=50
+
+echo -e "\ndisk usage:"
+
+# Process df output
+# Обработка вывода df
+LC_ALL=C df -h | awk 'NR>1' | while read -r line; do
+    # Parse df output
+    # Парсинг вывода df
+    device=$(echo "$line" | awk '{print $1}')
+    mountpoint=$(echo "$line" | awk '{print $6}')
+    pcent=$(echo "$line" | awk '{print $5}')
+    used=$(echo "$line" | awk '{print $3}')
+    size=$(echo "$line" | awk '{print $2}')
+
+    # Skip virtual filesystems
+    # Пропуск виртуальных ФС
+    [[ "$device" == tmpfs* ]] || [[ "$device" == udev* ]] || [[ "$device" == devtmpfs* ]] && continue
+
+    # Remove percentage sign
+    # Убираем процентный символ
+    usagePercent=${pcent%\%}
+    
+    # Set color
+    # Установка цвета
+    if (( $(echo "$usagePercent >= $maxDiskUsage" | bc -l 2>/dev/null) )); then
+        color=$RED
+    elif (( $(echo "$usagePercent >= 70" | bc -l 2>/dev/null) )); then
+        color=$YELLOW
+    else
+        color=$GREEN
+    fi
+
+    # Build progress bar
+    # Построение индикатора
+    usedBarWidth=$(( ($usagePercent * $barWidth) / 100 ))
+    barContent=$(printf "%${usedBarWidth}s" | tr ' ' '=')
+    emptyContent=$(printf "%$((barWidth - usedBarWidth))s")
+
+    # Output
+    # Вывод
+    echo -e "  ${dim}${device} ${clear}(${mountpoint})"
+    echo -e "  ${color}[${barContent}${emptyContent}]${clear}"
+    echo -e "  ${used} used / ${size} total (${color}${usagePercent}%${clear})\n"
+done
