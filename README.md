@@ -18,6 +18,8 @@ if [ -f /path/to/your/script.sh ]; then
     /path/to/your/script.sh
 fi
 ```
+### *Пример отображения:*
+![example](https://github.com/user-attachments/assets/50f1707c-8c51-4eef-8147-22b16a5728fa)
 
 ---
 
@@ -41,6 +43,11 @@ if [ -f /path/to/your/script.sh ]; then
     /path/to/your/script.sh
 fi
 ```
+### *Display example:*
+![example](https://github.com/user-attachments/assets/6f9ad13b-3dca-4d7b-b44a-a055058fd72f)
+
+---
+
 ### *Дополнительные советы:*
 
 Для /etc/update-motd.d/:
